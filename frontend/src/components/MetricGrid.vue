@@ -37,6 +37,8 @@ function openTargetDialog(item: KpiItem) {
   targetDialogVisible.value = true;
 }
 
+const isSaving = ref(false);
+
 async function saveTarget() {
   if (!editingItem.value || !targetValue.value) return;
 
@@ -46,6 +48,7 @@ async function saveTarget() {
     return;
   }
 
+  isSaving.value = true;
   try {
     const result = await updateKpiTarget(editingItem.value.label, target);
     if (result.success) {
@@ -53,12 +56,17 @@ async function saveTarget() {
       targetDialogVisible.value = false;
       emit("target-updated");
     } else {
-      ElMessage.error(result.message);
+      ElMessage.error(result.message || "保存失败");
     }
-  } catch {
-    editingItem.value.monthlyTarget = target;
-    ElMessage.success("目标已更新（本地）");
-    targetDialogVisible.value = false;
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : "保存失败，请重试";
+    ElMessage.error({
+      message: `目标保存失败：${errorMsg}`,
+      duration: 4000,
+      showClose: true,
+    });
+  } finally {
+    isSaving.value = false;
   }
 }
 
