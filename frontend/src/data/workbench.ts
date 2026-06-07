@@ -43,25 +43,29 @@ export const localKpis: KpiItem[] = [
     "label": "今日处理",
     "value": "98",
     "trend": "+12%",
-    "tone": "primary"
+    "tone": "primary",
+    "monthlyTarget": 2500
   },
   {
     "label": "预约/订单",
     "value": "31",
     "trend": "+8%",
-    "tone": "warm"
+    "tone": "warm",
+    "monthlyTarget": 800
   },
   {
     "label": "履约率",
     "value": "91%",
     "trend": "+3%",
-    "tone": "cool"
+    "tone": "cool",
+    "monthlyTarget": 95
   },
   {
     "label": "待处理",
     "value": "6",
     "trend": "需跟进",
-    "tone": "neutral"
+    "tone": "neutral",
+    "monthlyTarget": 20
   }
 ];
 

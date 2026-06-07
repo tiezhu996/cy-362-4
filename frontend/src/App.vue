@@ -16,13 +16,21 @@ function goHealth() {
   window.location.href = REQUEST_MESSAGES.healthPath;
 }
 
-onMounted(async () => {
+async function loadOverview() {
   try {
     overview.value = await fetchOverview();
     notice.value = "后端服务已联通，当前展示实时接口数据。";
   } catch {
     notice.value = REQUEST_MESSAGES.overviewFallback;
   }
+}
+
+async function handleTargetUpdated() {
+  await loadOverview();
+}
+
+onMounted(() => {
+  loadOverview();
 });
 </script>
 
@@ -42,7 +50,7 @@ onMounted(async () => {
           <h2>{{ overview.appName }}</h2>
           <p>{{ overview.description }}</p>
         </article>
-        <MetricGrid :items="overview.kpis" />
+        <MetricGrid :items="overview.kpis" @target-updated="handleTargetUpdated" />
       </div>
       <FeatureStrip :items="overview.features" />
       <section class="work-panel">

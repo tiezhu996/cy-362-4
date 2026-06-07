@@ -11,6 +11,7 @@ export interface KpiItem {
   value: string;
   trend: string;
   tone: string;
+  monthlyTarget?: number;
 }
 
 export interface OperationRecord {

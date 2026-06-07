@@ -1,6 +1,9 @@
 package com.generated.ldmurdergame.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Service;
 import com.generated.ldmurdergame.model.FeatureItem;
 import com.generated.ldmurdergame.model.KpiItem;
@@ -9,7 +12,23 @@ import com.generated.ldmurdergame.model.OverviewResponse;
 
 @Service
 public class OverviewService {
+
+  private final Map<String, Integer> kpiTargets = new ConcurrentHashMap<>();
+
+  public OverviewService() {
+    kpiTargets.put("今日处理", 2500);
+    kpiTargets.put("预约/订单", 800);
+    kpiTargets.put("履约率", 95);
+    kpiTargets.put("待处理", 20);
+  }
+
   public OverviewResponse getOverview() {
+    List<KpiItem> kpis = new ArrayList<>();
+    kpis.add(new KpiItem("今日处理", "98", "+12%", "primary", kpiTargets.get("今日处理")));
+    kpis.add(new KpiItem("预约/订单", "31", "+8%", "warm", kpiTargets.get("预约/订单")));
+    kpis.add(new KpiItem("履约率", "91%", "+3%", "cool", kpiTargets.get("履约率")));
+    kpis.add(new KpiItem("待处理", "6", "需跟进", "neutral", kpiTargets.get("待处理")));
+
     return new OverviewResponse(
       "剧本杀门店运营管理系统",
       "ldmurdergame",
@@ -19,15 +38,20 @@ public class OverviewService {
         new FeatureItem(3, "玩家组局与角色分配", "满局后DM可为玩家分配角色，支持随机分配与手动调整，系统记录每次组局玩家名单与角色分配结果。", "巡检中", "10 项"),
         new FeatureItem(4, "会员积分与等级体系", "注册会员消费积累积分，设置等级规则（如青铜/白银/黄金/钻石），不同等级享受折扣与优先拼车位权益，积分可兑换周边或抵扣费用。", "优化中", "4 级"),
         new FeatureItem(5, "营收与上座率分析", "管理员查看每日/周/月营收报表、各剧本上座率排行、DM带本场次与评分统计，支持导出营业数据。", "可导出", "28 条")),
-      List.of(new KpiItem("今日处理", "98", "+12%", "primary"),
-        new KpiItem("预约/订单", "31", "+8%", "warm"),
-        new KpiItem("履约率", "91%", "+3%", "cool"),
-        new KpiItem("待处理", "6", "需跟进", "neutral")),
+      kpis,
       List.of(new OperationRecord("ldmurdergame-1", "剧本库与DM管理", "运营组", "已上线", "88%", "高"),
         new OperationRecord("ldmurdergame-2", "场次排期与拼车位", "管理员", "排期中", "31 单", "中"),
         new OperationRecord("ldmurdergame-3", "玩家组局与角色分配", "服务台", "巡检中", "10 项", "低"),
         new OperationRecord("ldmurdergame-4", "会员积分与等级体系", "财务组", "优化中", "4 级", "高"),
         new OperationRecord("ldmurdergame-5", "营收与上座率分析", "审核组", "可导出", "28 条", "中"))
     );
+  }
+
+  public boolean updateKpiTarget(String label, Integer monthlyTarget) {
+    if (kpiTargets.containsKey(label)) {
+      kpiTargets.put(label, monthlyTarget);
+      return true;
+    }
+    return false;
   }
 }
